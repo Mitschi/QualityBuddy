@@ -6,19 +6,10 @@ node_js:
 cache:
   directories:
     - "node_modules"
-git:
-  depth: 5
-addons:
-  firefox: "latest"
-before_script:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
 before_install:
   - npm i -g npm@latest
 env:
   - TEST_DIR=quality-testing
-  - TEST_DIR=tilt-server
-script: cd $TEST_DIR && npm install && npm test
 install:
   - cd $TEST_DIR
   - npm ci
@@ -28,5 +19,5 @@ script:
   - npm run lint
   - npm test
 after_success:
-  - cd quality-testing/
+  - cd $TEST_DIR
   - npm run coverage
