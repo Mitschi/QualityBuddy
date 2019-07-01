@@ -15,6 +15,5 @@ install:
   - npm install
 #  - npm run start:dev
 script:
-  - cd $TEST_DIR
   - npm run lint
   - npm test
