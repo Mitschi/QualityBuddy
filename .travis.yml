@@ -10,9 +10,9 @@ before_install:
   - npm i -g npm@latest
 env:
   - TEST_DIR=quality-testing
-#install:
-#  - cd $TEST_DIR
-#  - npm ci
+install:
+  - cd $TEST_DIR
+  - npm install
 #  - npm run start:dev
 script:
   - cd $TEST_DIR
