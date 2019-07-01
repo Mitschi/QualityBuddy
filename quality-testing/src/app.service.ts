@@ -7,6 +7,6 @@ export class AppService {
   }
 
   hello(id: string): string {
-    return `Hello ${id}`
+    return `Hello ${id}`;
   }
 }

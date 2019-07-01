@@ -10,14 +10,11 @@ before_install:
   - npm i -g npm@latest
 env:
   - TEST_DIR=quality-testing
-install:
-  - cd $TEST_DIR
-  - npm ci
-  - npm run build:dev
+#install:
+#  - cd $TEST_DIR
+#  - npm ci
+#  - npm run start:dev
 script:
   - cd $TEST_DIR
   - npm run lint
   - npm test
-after_success:
-  - cd $TEST_DIR
-  - npm run coverage
