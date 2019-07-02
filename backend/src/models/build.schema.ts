@@ -5,4 +5,5 @@ export const BuildSchema = new mongoose.Schema({
     duration: Number,
     started_at: Date,
     finished_at: Date,
+    number: String,
 });

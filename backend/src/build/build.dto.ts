@@ -1,6 +1,4 @@
-import { Document } from 'mongoose';
-
-export interface Build extends Document {
+export interface BuildDTO {
     state: string;
     duration: number;
     started_at: Date;

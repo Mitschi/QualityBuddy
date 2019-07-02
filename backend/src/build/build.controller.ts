@@ -12,6 +12,6 @@ export class BuildController {
 
     @Get(':id')
     async getBuild() {
-        return this.buildService.createObject();
+        return this.buildService.fetchBuilds();
     }
 }
