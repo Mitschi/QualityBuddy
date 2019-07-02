@@ -5,5 +5,5 @@ export interface Build extends Document {
     duration: number;
     started_at: Date;
     finished_at: Date;
-    number: string;
+    number: number;
 }

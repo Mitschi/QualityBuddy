@@ -3,5 +3,5 @@ export interface BuildDTO {
     duration: number;
     started_at: Date;
     finished_at: Date;
-    number: string;
+    number: number;
 }
