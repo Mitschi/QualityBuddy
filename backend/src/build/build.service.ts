@@ -33,20 +33,10 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
     }
 
     async cancelJob() {
-        Logger.log('stopped fetching Repo builds', 'fetchRepoBuilds');
         this.schedule.cancelJob('fetching-builds');
     }
 
-    async getRepositoryIdsAndToken() {
-        Logger.log('Fetching Repo builds', 'getRepositories');
-        const repos = await this.repoService.findAll();
-        repos.forEach((repo) => {
-            this.fetchBuilds(repo.id, repo.token);
-        });
-    }
-
     async fetchBuilds(id: string, token: string) {
-
         const response = await this.httpService.get(`https://api.travis-ci.org/repo/${id}/builds`, {
             headers: {
                 'Authorization': `token ${token}`,
@@ -57,10 +47,6 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
         const builds = await this.editData(response);
         await this.saveValidBuilds(builds);
         return { message: 'Successfully fetched builds' };
-    }
-
-    async listBuildsByRepo(id: string) {
-        return await this.buildModel.find({repo_id: id});
     }
 
     private async editData(response): Promise<Build[]> {
@@ -82,7 +68,7 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
     }
 
     private async saveValidBuilds(builds: Build[]) {
-        const lastSavedBuild = await this.findAll();
+        const lastSavedBuild = await this.buildModel.find({id: (builds[0].id)});
 
         builds.forEach((build) => {
             if (lastSavedBuild[0] == undefined || lastSavedBuild[0] == null) {
@@ -100,8 +86,20 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
         saveBuild.save();
     }
 
+    async getRepositoryIdsAndToken() {
+        Logger.log('Fetching Repo builds', 'getRepositories');
+        const repos = await this.repoService.findAll();
+        repos.forEach((repo) => {
+            this.fetchBuilds(repo.id, repo.token);
+        });
+    }
+
     async findAll(): Promise<Build[]> {
         return this.buildModel.find();
+    }
+
+    async listBuildsByRepo(id: string) {
+        return await this.buildModel.find({repo_id: id});
     }
 
     async deleteAll() {
