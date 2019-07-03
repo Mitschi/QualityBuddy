@@ -22,10 +22,11 @@ export class BuildService {
         }).toPromise();
 
         const builds = await this.editData(response);
-        this.saveValidBuilds(builds);
+        await this.saveValidBuilds(builds);
+        return { message: 'Successfully fetched builds' };
     }
 
-    async editData(response): Promise<Build[]> {
+    private async editData(response): Promise<Build[]> {
         const builds = [];
 
         await response.data.builds.forEach(element => {
@@ -42,7 +43,7 @@ export class BuildService {
         return builds;
     }
 
-    async saveValidBuilds(builds: Build[]) {
+    private async saveValidBuilds(builds: Build[]) {
         const lastSavedBuild = await this.findAll();
 
         builds.forEach((build) => {
@@ -56,7 +57,7 @@ export class BuildService {
         });
     }
 
-    async saveBuild(build) {
+    private async saveBuild(build) {
         const saveBuild = await this.buildModel.create(build);
         saveBuild.save();
     }
