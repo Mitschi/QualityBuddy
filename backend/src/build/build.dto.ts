@@ -4,4 +4,5 @@ export interface BuildDTO {
     started_at: Date;
     finished_at: Date;
     number: number;
+    repo_id: string;
 }

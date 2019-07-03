@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param } from '@nestjs/common';
 import { BuildService } from './build.service';
 
 @Controller('build')
@@ -11,7 +11,12 @@ export class BuildController {
     }
 
     @Get(':id')
-    async getBuild() {
+    async getBuildsByRepo(@Param('id') id: string) {
+        return this.buildService.listBuildsByRepo(id);
+    }
+
+    @Post()
+    async fetchBuilds() {
         return this.buildService.fetchBuilds();
     }
 

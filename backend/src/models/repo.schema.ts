@@ -6,6 +6,8 @@ export const RepoSchema = new mongoose.Schema({
     description: String,
     owner: String,
     slug: String,
+    href: String,
+    token: String,
     builds: [
         {
         type: mongoose.Schema.Types.ObjectId,

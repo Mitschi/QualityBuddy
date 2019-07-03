@@ -26,6 +26,10 @@ export class BuildService {
         return { message: 'Successfully fetched builds' };
     }
 
+    async listBuildsByRepo(id: String) {
+        return await this.buildModel.find({repo_id: id});
+    }
+
     private async editData(response): Promise<Build[]> {
         const builds = [];
 
@@ -36,6 +40,7 @@ export class BuildService {
                 started_at: element.started_at,
                 finished_at: element.finished_at,
                 duration: element.duration,
+                repo_id: element.repository.id,
             };
             builds.push(build);
         });

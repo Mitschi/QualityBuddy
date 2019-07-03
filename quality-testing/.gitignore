@@ -13,6 +13,9 @@ lerna-debug.log*
 # OS
 .DS_Store
 
+# Ignore files related to API keys
+.env
+
 # Tests
 /coverage
 /.nyc_output
