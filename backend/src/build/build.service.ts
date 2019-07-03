@@ -5,38 +5,36 @@ import { Build } from '../types/build';
 import { BuildDTO } from './build.dto';
 import { InjectSchedule, Schedule } from 'nest-schedule';
 import { RepoService } from '../repo/repo.service';
-import { Repo } from 'src/types/repo';
 
 const FETCHING_TIME: number = 60000;
 
 @Injectable()
 export class BuildService implements OnModuleDestroy, OnModuleInit {
     constructor(@InjectModel('Build') private buildModel: Model<Build>,
-                private httpService: HttpService,
                 @InjectSchedule() private readonly schedule: Schedule,
+                private httpService: HttpService,
                 private readonly repoService: RepoService) {}
 
     onModuleInit() {
-        Logger.log('Fetching Repo builds', 'onModuleInit');
-        this.fetchRepoBuilds();
+        this.startBuildFetching();
     }
 
     onModuleDestroy() {
-        this.cancelJob();
+        this.cancelBuildFetching();
     }
 
-    async fetchRepoBuilds() {
+    private async startBuildFetching() {
         this.schedule.scheduleIntervalJob('fetching-builds', FETCHING_TIME , (): boolean => {
             this.getRepositoryIdsAndToken();
             return false;
         });
     }
 
-    async cancelJob() {
+    private async cancelBuildFetching() {
         this.schedule.cancelJob('fetching-builds');
     }
 
-    async fetchBuilds(id: string, token: string) {
+    private async fetchBuilds(id: string, token: string) {
         const response = await this.httpService.get(`https://api.travis-ci.org/repo/${id}/builds`, {
             headers: {
                 'Authorization': `token ${token}`,
@@ -44,12 +42,12 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
             },
         }).toPromise();
 
-        const builds = await this.editData(response);
+        const builds = await this.editingBuildData(response);
         await this.saveValidBuilds(builds);
         return { message: 'Successfully fetched builds' };
     }
 
-    private async editData(response): Promise<Build[]> {
+    private async editingBuildData(response): Promise<Build[]> {
         const builds = [];
 
         await response.data.builds.forEach(element => {
@@ -60,6 +58,12 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
                 finished_at: element.finished_at,
                 duration: element.duration,
                 repo_id: element.repository.id,
+                commit: {
+                    id: element.commit.id,
+                    message: element.commit.message,
+                    committed_at: element.commit.committed_at,
+                    sha: element.commit.sha,
+                },
             };
             builds.push(build);
         });

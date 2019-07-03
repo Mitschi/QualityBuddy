@@ -7,4 +7,10 @@ export interface Build extends Document {
     finished_at: Date;
     number: number;
     repo_id: string;
+    commit: {
+        id: string;
+        sha: string;
+        message: string;
+        committed_at: Date;
+    };
 }

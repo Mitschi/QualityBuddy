@@ -7,4 +7,10 @@ export const BuildSchema = new mongoose.Schema({
     finished_at: Date,
     number: Number,
     repo_id: String,
+    commit: {
+        id: String,
+        sha: String,
+        message: String,
+        committed_at: Date,
+    },
 });
