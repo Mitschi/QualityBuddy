@@ -6,9 +6,15 @@ import { BuildSchema } from '../models/build.schema';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpExceptionFilter } from '../shared/http-exception.filter';
 import { LoggingInterceptor } from '../shared/logging.interceptor';
+import { ScheduleModule } from 'nest-schedule';
 
 @Module({
-  imports: [MongooseModule.forFeature([{name: 'Build', schema: BuildSchema}]), HttpModule],
+  imports:
+  [
+    MongooseModule.forFeature([{name: 'Build', schema: BuildSchema}]),
+    HttpModule,
+    ScheduleModule.register(),
+  ],
   providers: [
     BuildService,
     {

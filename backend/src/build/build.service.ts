@@ -1,12 +1,38 @@
-import { Injectable, HttpService } from '@nestjs/common';
+import { Injectable, HttpService, OnModuleInit, OnModuleDestroy, Logger  } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Build } from '../types/build';
 import { BuildDTO } from './build.dto';
+import { InjectSchedule, Schedule } from 'nest-schedule';
+
+const FETCHING_TIME: number = 600000;
 
 @Injectable()
-export class BuildService {
-    constructor(@InjectModel('Build') private buildModel: Model<Build>, private httpService: HttpService) {}
+export class BuildService implements OnModuleDestroy, OnModuleInit {
+    constructor(@InjectModel('Build') private buildModel: Model<Build>,
+                private httpService: HttpService,
+                @InjectSchedule() private readonly schedule: Schedule) {}
+
+    onModuleInit() {
+        Logger.log('Fetching Repo builds', 'onModuleInit');
+        this.fetchRepoBuilds();
+    }
+
+    onModuleDestroy() {
+        this.cancelJob();
+    }
+
+    async fetchRepoBuilds() {
+        this.schedule.scheduleIntervalJob('fetching-builds', FETCHING_TIME , (): boolean => {
+            Logger.log('Fetching Repo builds', 'fetchRepoBuilds');
+            return false;
+        });
+    }
+
+    async cancelJob() {
+        Logger.log('stopped fetching Repo builds', 'fetchRepoBuilds');
+        this.schedule.cancelJob('fetching-builds');
+    }
 
     async findAll(): Promise<Build[]> {
         return this.buildModel.find();
