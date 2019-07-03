@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Build } from '../types/build';
 import { BuildDTO } from './build.dto';
-import 'dotenv/config';
 
 @Injectable()
 export class BuildService {
@@ -13,10 +12,10 @@ export class BuildService {
         return this.buildModel.find();
     }
 
-    async fetchBuilds() {
-        const response = await this.httpService.get('https://api.travis-ci.org/repo/25171564/builds', {
+    async fetchBuilds(id: string, token: string) {
+        const response = await this.httpService.get(`https://api.travis-ci.org/repo/${id}/builds`, {
             headers: {
-                'Authorization': `token ${process.env.API_TOKEN}`,
+                'Authorization': `token ${token}`,
                 'Travis-API-Version': 3,
             },
         }).toPromise();
@@ -26,7 +25,7 @@ export class BuildService {
         return { message: 'Successfully fetched builds' };
     }
 
-    async listBuildsByRepo(id: String) {
+    async listBuildsByRepo(id: string) {
         return await this.buildModel.find({repo_id: id});
     }
 
