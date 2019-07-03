@@ -10,5 +10,6 @@ import { RepoSchema } from '../models/repo.schema';
     RepoService,
   ],
   controllers: [RepoController],
+  exports: [RepoService],
 })
 export class RepoModule {}

@@ -4,14 +4,17 @@ import { Model } from 'mongoose';
 import { Build } from '../types/build';
 import { BuildDTO } from './build.dto';
 import { InjectSchedule, Schedule } from 'nest-schedule';
+import { RepoService } from '../repo/repo.service';
+import { Repo } from 'src/types/repo';
 
-const FETCHING_TIME: number = 600000;
+const FETCHING_TIME: number = 60000;
 
 @Injectable()
 export class BuildService implements OnModuleDestroy, OnModuleInit {
     constructor(@InjectModel('Build') private buildModel: Model<Build>,
                 private httpService: HttpService,
-                @InjectSchedule() private readonly schedule: Schedule) {}
+                @InjectSchedule() private readonly schedule: Schedule,
+                private readonly repoService: RepoService) {}
 
     onModuleInit() {
         Logger.log('Fetching Repo builds', 'onModuleInit');
@@ -24,7 +27,7 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
 
     async fetchRepoBuilds() {
         this.schedule.scheduleIntervalJob('fetching-builds', FETCHING_TIME , (): boolean => {
-            Logger.log('Fetching Repo builds', 'fetchRepoBuilds');
+            this.getRepositoryIdsAndToken();
             return false;
         });
     }
@@ -34,11 +37,16 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
         this.schedule.cancelJob('fetching-builds');
     }
 
-    async findAll(): Promise<Build[]> {
-        return this.buildModel.find();
+    async getRepositoryIdsAndToken() {
+        Logger.log('Fetching Repo builds', 'getRepositories');
+        const repos = await this.repoService.findAll();
+        repos.forEach((repo) => {
+            this.fetchBuilds(repo.id, repo.token);
+        });
     }
 
     async fetchBuilds(id: string, token: string) {
+
         const response = await this.httpService.get(`https://api.travis-ci.org/repo/${id}/builds`, {
             headers: {
                 'Authorization': `token ${token}`,
@@ -90,6 +98,10 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
     private async saveBuild(build) {
         const saveBuild = await this.buildModel.create(build);
         saveBuild.save();
+    }
+
+    async findAll(): Promise<Build[]> {
+        return this.buildModel.find();
     }
 
     async deleteAll() {

@@ -7,6 +7,7 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpExceptionFilter } from '../shared/http-exception.filter';
 import { LoggingInterceptor } from '../shared/logging.interceptor';
 import { ScheduleModule } from 'nest-schedule';
+import { RepoModule } from '../repo/repo.module';
 
 @Module({
   imports:
@@ -14,6 +15,7 @@ import { ScheduleModule } from 'nest-schedule';
     MongooseModule.forFeature([{name: 'Build', schema: BuildSchema}]),
     HttpModule,
     ScheduleModule.register(),
+    RepoModule,
   ],
   providers: [
     BuildService,
