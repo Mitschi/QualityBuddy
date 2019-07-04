@@ -45,14 +45,28 @@ describe('RepoController (e2e)', () => {
           .expect(HttpStatus.CREATED);
     });
 
-    it('get repos', () => {
+    it('Should requect duplicated repo', () => {
         return request(app.getHttpServer())
-        .get('/repo')
+        .post('/repo')
+        .set('Accept', 'application/json')
+        .send(repo)
+        .expect(({ body }) => {
+            expect(body.message).toEqual('Repo already exists');
+          })
+          .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('get repo', () => {
+        return request(app.getHttpServer())
+        .get('/repo/test')
         .expect(200)
         .expect(({body}) => {
             expect(body).toBeDefined();
-            // expect(body)
-            console.log(body[0]);
+            expect(body.name).toEqual(repo.name);
+            expect(body.id).toEqual(repo.id);
+            expect(body.href).toEqual(repo.href);
+            expect(body.slug).toEqual(repo.slug);
+            expect(body.token).toEqual(repo.token);
         });
     });
 });

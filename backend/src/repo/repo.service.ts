@@ -12,6 +12,10 @@ export class RepoService {
         return this.repoModel.find();
     }
 
+    async findOne(id: string): Promise<Repo> {
+        return await this.repoModel.findOne({id});
+    }
+
     async create(repoDto: RepoDto): Promise<Repo> {
         const repo = await this.repoModel.findOne({id: repoDto.id});
         if (repo) {
@@ -24,4 +28,5 @@ export class RepoService {
     async deleteAll() {
         return this.repoModel.remove({});
     }
+
 }
