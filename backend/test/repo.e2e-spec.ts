@@ -20,6 +20,8 @@ describe('RepoController (e2e)', () => {
         .expect(200)
         .expect(({body}) => {
             expect(body).toBeDefined();
+            // expect(body)
+            console.log(body[0]);
         });
     });
 });
