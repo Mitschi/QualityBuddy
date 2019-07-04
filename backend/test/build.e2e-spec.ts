@@ -1,7 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
-import { AppModule } from '../src/app.module';
-import { DatabaseModule } from '../src/database/database.module';
 import { BuildModule } from '../src/build/build.module';
 import { DatabaseTestingModule } from '../src/database/database-testing.module';
 
@@ -20,6 +18,15 @@ describe('BuildController (e2e)', () => {
   it('get builds', () => {
     return request(app.getHttpServer())
       .get('/build')
+      .expect(200)
+      .expect(({body}) => {
+          expect(body).toBeDefined();
+      });
+  });
+
+  it('get builds by repository', () => {
+    return request(app.getHttpServer())
+      .get('/build/id')
       .expect(200)
       .expect(({body}) => {
           expect(body).toBeDefined();
