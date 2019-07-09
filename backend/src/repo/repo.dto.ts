@@ -12,4 +12,8 @@ export class RepoDto {
     href: string;
     @IsString()
     token: string;
+    @IsString()
+    type: string;
+    @IsString()
+    workspace: string;
 }

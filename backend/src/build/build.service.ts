@@ -118,7 +118,6 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
                 },
             };
 
-            console.log(build);
             builds.push(build);
         });
 
@@ -126,7 +125,7 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
     }
 
     private async saveValidBuilds(builds: Build[], repoId: string) {
-        const lastSavedBuild = await this.buildModel.find({repoId}).sort({number: -1}).limit(1);
+        const lastSavedBuild = await this.buildModel.find({repo_id: repoId}).sort({number: -1}).limit(1);
         builds.forEach((build) => {
             if (lastSavedBuild[0] == undefined || lastSavedBuild[0] == null) {
                 this.saveBuild(build);
