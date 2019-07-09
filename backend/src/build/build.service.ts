@@ -6,6 +6,7 @@ import { BuildDTO } from './build.dto';
 import { InjectSchedule, Schedule } from 'nest-schedule';
 import { RepoService } from '../repo/repo.service';
 import * as crypto from 'crypto-js';
+import 'dotenv/config';
 
 const FETCHING_TIME: number = 60000;
 
@@ -36,7 +37,7 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
     }
 
     private async fetchBuilds(id: string, token: string) {
-        const decryptToken = await crypto.AES.decrypt(token, 'token12345678');
+        const decryptToken = await crypto.AES.decrypt(token, process.env.ENCRYPTION_SECRET);
         const response = await this.httpService.get(`https://api.travis-ci.org/repo/${id}/builds`, {
             headers: {
                 'Authorization': `token ${decryptToken.toString(crypto.enc.Utf8)}`,
