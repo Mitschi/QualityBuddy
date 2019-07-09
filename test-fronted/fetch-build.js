@@ -1,23 +1,13 @@
 const axios = require('axios');
 
+export let build
 
-
-async function fetchBuild(){
-    let build
-    //return axios.get("http://dummy.restapiexample.com/api/v1/employees");
-    await axios({
-        method: 'get',
-        url: 'http://dummy.restapiexample.com/api/v1/employees',
-        responseType: 'JSON'
-      })
-        .then((response) =>  {
-          build = response
-        })
-        .catch((error) =>{
-            console.error(error)
-        })
-        ;
-        return await build
+export function fetchBuild(){
+    axios.get("http://dummy.restapiexample.com/api/v1/employees")
+    .then((response) => {
+      build = response
+    })
 }
-console.log(fetchBuild())
+fetchBuild()
+console.log(build)
 //let build = JSON.parse(fetchBuild());
