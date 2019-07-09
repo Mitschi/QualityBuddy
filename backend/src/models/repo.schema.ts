@@ -9,6 +9,7 @@ export const RepoSchema = new mongoose.Schema({
     href: String,
     token: String,
     type: String,
+    workspace: String,
     builds: [
         {
         type: mongoose.Schema.Types.ObjectId,

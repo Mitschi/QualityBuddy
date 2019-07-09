@@ -26,4 +26,9 @@ export class RepoController {
     deleteAll() {
         return this.repoService.deleteAll();
     }
+
+    @Delete(':id')
+    deleteOne(@Param('id') id: string) {
+        return this.repoService.deleteOne(id);
+    }
 }

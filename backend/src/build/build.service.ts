@@ -7,8 +7,10 @@ import { InjectSchedule, Schedule } from 'nest-schedule';
 import { RepoService } from '../repo/repo.service';
 import * as crypto from 'crypto-js';
 import 'dotenv/config';
+import { RepoTypes } from '../shared/repo.types';
+import { Repo } from '../types/repo';
 
-const FETCHING_TIME: number = 60000;
+const FETCHING_TIME: number = 10000;
 
 @Injectable()
 export class BuildService implements OnModuleDestroy, OnModuleInit {
@@ -36,14 +38,26 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
         this.schedule.cancelJob('fetching-builds');
     }
 
-    private async fetchBuilds(id: string, token: string) {
-        const decryptToken = await crypto.AES.decrypt(token, process.env.ENCRYPTION_SECRET);
-        const response = await this.httpService.get(`https://api.travis-ci.org/repo/${id}/builds`, {
+    private async fetchBuilds(repo: Repo) {
+        const decryptToken = await crypto.AES.decrypt(repo.token, process.env.ENCRYPTION_SECRET);
+        let response;
+        if (repo.type === RepoTypes.TRAVIS) {
+            response = await this.httpService.get(`https://api.travis-ci.org/repo/${repo.id}/builds`, {
             headers: {
                 'Authorization': `token ${decryptToken.toString(crypto.enc.Utf8)}`,
                 'Travis-API-Version': 3,
             },
-        }).toPromise();
+            }).toPromise();
+        } else if (repo.type === RepoTypes.BUDDY) {
+            response = await this.httpService.get(
+                `https://api.buddy.works/workspaces/${repo.workspace}/projects/${repo.name}/pipelines/${repo.id}/executions`, {
+                headers: {
+                    'Authorization': `Bearer ${decryptToken.toString(crypto.enc.Utf8)}`,
+                    'Content-Type': 'application/json',
+                },
+            }).toPromise();
+            console.log(response.data);
+        }
 
         const builds = await this.editingBuildData(response);
         await this.saveValidBuilds(builds);
@@ -97,7 +111,7 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
         Logger.log('Fetching Repo builds', 'getRepositories');
         const repos = await this.repoService.findAll();
         repos.forEach((repo) => {
-            this.fetchBuilds(repo.id, repo.token);
+            this.fetchBuilds(repo);
         });
     }
 

@@ -35,4 +35,8 @@ export class RepoService {
         return this.repoModel.remove({});
     }
 
+    async deleteOne(id: string) {
+        return this.repoModel.findByIdAndRemove(id);
+    }
+
 }

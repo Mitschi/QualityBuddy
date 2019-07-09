@@ -7,4 +7,5 @@ export interface Repo extends Document {
     href: string;
     token: string;
     type: string;
+    workspace: string;
 }
