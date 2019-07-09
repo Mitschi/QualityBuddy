@@ -6,4 +6,5 @@ export interface Repo extends Document {
     slug: string;
     href: string;
     token: string;
+    type: string;
 }
