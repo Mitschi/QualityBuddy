@@ -9,6 +9,7 @@ import * as crypto from 'crypto-js';
 import 'dotenv/config';
 import { RepoTypes } from '../shared/repo.types';
 import { Repo } from '../types/repo';
+import { editBuddyBuildData, editTravisBuildData } from '../shared/editing-builds';
 
 const FETCHING_TIME: number = 10000;
 
@@ -65,63 +66,10 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
 
     private async editingBuildData(response, type: string, repoId: string): Promise<Build[]> {
         if (type === RepoTypes.TRAVIS) {
-            return await this.editTravisBuildData(response);
+            return await editTravisBuildData(response);
         } else if (type === RepoTypes.BUDDY) {
-            return await this.editBuddyBuildData(response, repoId);
+            return await editBuddyBuildData(response, repoId);
         }
-    }
-
-    private async editTravisBuildData(response): Promise<Build[]> {
-        const builds = [];
-
-        await response.data.builds.forEach(element => {
-            const build: BuildDTO = {
-                number: element.number,
-                state: element.state,
-                started_at: element.started_at,
-                finished_at: element.finished_at,
-                duration: element.duration,
-                repo_id: element.repository.id,
-                commit: {
-                    id: element.commit.id,
-                    message: element.commit.message,
-                    committed_at: element.commit.committed_at,
-                    sha: element.commit.sha,
-                },
-            };
-            builds.push(build);
-        });
-
-        return builds;
-    }
-
-    private async editBuddyBuildData(response, repoId: string): Promise<Build[]> {
-        Logger.log('Buddy build', 'editBuddyBuildData');
-        const builds = [];
-
-        await response.data.executions.forEach(element => {
-            const finishTime = new Date(element.finish_date);
-            const startTime = new Date(element.start_date);
-            const duration = new Date(finishTime.getTime() - startTime.getTime()).getSeconds();
-            const build: BuildDTO = {
-                number: element.id,
-                state: (element.status === 'SUCCESSFUL' ? 'passed' : 'failed'),
-                started_at: element.start_date,
-                finished_at: element.finish_date,
-                duration,
-                repo_id: repoId,
-                commit: {
-                    id: element.to_revision.committer.id,
-                    message: element.to_revision.message,
-                    committed_at: element.to_revision.commit_date,
-                    sha: element.to_revision.revision,
-                },
-            };
-
-            builds.push(build);
-        });
-
-        return builds;
     }
 
     private async saveValidBuilds(builds: Build[], repoId: string) {
