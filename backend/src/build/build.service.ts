@@ -56,15 +56,22 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
                     'Content-Type': 'application/json',
                 },
             }).toPromise();
-            console.log(response.data);
         }
 
-        const builds = await this.editingBuildData(response);
-        await this.saveValidBuilds(builds);
+        const builds = await this.editingBuildData(response, repo.type, repo.id);
+        await this.saveValidBuilds(builds, repo.id);
         return { message: 'Successfully fetched builds' };
     }
 
-    private async editingBuildData(response): Promise<Build[]> {
+    private async editingBuildData(response, type: string, repoId: string): Promise<Build[]> {
+        if (type === RepoTypes.TRAVIS) {
+            return await this.editTravisBuildData(response);
+        } else if (type === RepoTypes.BUDDY) {
+            return await this.editBuddyBuildData(response, repoId);
+        }
+    }
+
+    private async editTravisBuildData(response): Promise<Build[]> {
         const builds = [];
 
         await response.data.builds.forEach(element => {
@@ -88,9 +95,38 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
         return builds;
     }
 
-    private async saveValidBuilds(builds: Build[]) {
-        const lastSavedBuild = await this.buildModel.find().sort({number: -1}).limit(1);
+    private async editBuddyBuildData(response, repoId: string): Promise<Build[]> {
+        Logger.log('Buddy build', 'editBuddyBuildData');
+        const builds = [];
 
+        await response.data.executions.forEach(element => {
+            const finishTime = new Date(element.finish_date);
+            const startTime = new Date(element.start_date);
+            const duration = Math.abs(finishTime.getTime() - startTime.getTime());
+            const build: BuildDTO = {
+                number: element.id,
+                state: (element.status === 'SUCCESSFUL' ? 'passed' : 'failed'),
+                started_at: element.start_date,
+                finished_at: element.finish_date,
+                duration,
+                repo_id: repoId,
+                commit: {
+                    id: element.to_revision.committer.id,
+                    message: element.to_revision.message,
+                    committed_at: element.to_revision.commit_date,
+                    sha: element.to_revision.revision,
+                },
+            };
+
+            console.log(build);
+            builds.push(build);
+        });
+
+        return builds;
+    }
+
+    private async saveValidBuilds(builds: Build[], repoId: string) {
+        const lastSavedBuild = await this.buildModel.find({repoId}).sort({number: -1}).limit(1);
         builds.forEach((build) => {
             if (lastSavedBuild[0] == undefined || lastSavedBuild[0] == null) {
                 this.saveBuild(build);
