@@ -75,7 +75,7 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
     }
 
     private async saveValidBuilds(builds: Build[]) {
-        const lastSavedBuild = await this.buildModel.find({id: (builds[0].id)});
+        const lastSavedBuild = await this.buildModel.find().sort({number: -1}).limit(1);
 
         builds.forEach((build) => {
             if (lastSavedBuild[0] == undefined || lastSavedBuild[0] == null) {
