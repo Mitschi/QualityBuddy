@@ -102,7 +102,7 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
         await response.data.executions.forEach(element => {
             const finishTime = new Date(element.finish_date);
             const startTime = new Date(element.start_date);
-            const duration = Math.abs(finishTime.getTime() - startTime.getTime());
+            const duration = new Date(finishTime.getTime() - startTime.getTime()).getSeconds();
             const build: BuildDTO = {
                 number: element.id,
                 state: (element.status === 'SUCCESSFUL' ? 'passed' : 'failed'),
