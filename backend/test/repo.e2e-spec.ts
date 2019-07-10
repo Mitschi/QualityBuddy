@@ -28,6 +28,8 @@ describe('RepoController (e2e)', () => {
         name: 'TestingRepo',
         slug: 'Tester/TestingRepo',
         token: 'somegreatlongtoken',
+        type: 'Travis',
+        workspace: 'undefined',
     };
 
     it('Create Repo', () => {
@@ -40,7 +42,6 @@ describe('RepoController (e2e)', () => {
             expect(body.id).toEqual(repo.id);
             expect(body.href).toEqual(repo.href);
             expect(body.slug).toEqual(repo.slug);
-            expect(body.token).toEqual(repo.token);
           })
           .expect(HttpStatus.CREATED);
     });
@@ -66,7 +67,6 @@ describe('RepoController (e2e)', () => {
             expect(body.id).toEqual(repo.id);
             expect(body.href).toEqual(repo.href);
             expect(body.slug).toEqual(repo.slug);
-            expect(body.token).toEqual(repo.token);
         });
     });
 });

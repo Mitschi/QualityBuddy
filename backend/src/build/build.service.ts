@@ -11,7 +11,7 @@ import { RepoTypes } from '../shared/repo.types';
 import { Repo } from '../types/repo';
 import { editBuddyBuildData, editTravisBuildData } from '../shared/editing-builds';
 
-const FETCHING_TIME: number = 10000;
+const FETCHING_TIME: number = 60000;
 
 @Injectable()
 export class BuildService implements OnModuleDestroy, OnModuleInit {

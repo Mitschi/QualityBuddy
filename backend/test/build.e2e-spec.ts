@@ -32,4 +32,13 @@ describe('BuildController (e2e)', () => {
           expect(body).toBeDefined();
       });
   });
+
+  it('delete builds', () => {
+    return request(app.getHttpServer())
+    .delete('/build')
+    .expect(200)
+    .expect(({body}) => {
+      expect(body).toBeDefined();
+    });
+  });
 });
