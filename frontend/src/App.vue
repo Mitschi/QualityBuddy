@@ -1,6 +1,11 @@
 <template>
-  <div id="app"> 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <div id="app">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
 
     <div id="wrapper">
       <div class="content-area">
@@ -8,126 +13,202 @@
           <div class="main">
             <div class="row mt-4">
               <div class="col-md-5">
-                
-                  <div class="box columnbox mt-4">
-                    <apexchart type="bar" :options="chartOptions" :series="series"></apexchart>
-                  </div>
+                <div class="box columnbox mt-4">
+                  <apexchart type="bar" :options="buildChartOptions" :series="buildSeries"></apexchart>
+                </div>
               </div>
               <div class="col-md-7">
-                  <div class="box  mt-4">
-                    <apexchart type="bar" :options="chartOptions" :series="series"></apexchart>
-                  </div>
+                <div class="box mt-4">
+                  <apexchart type="line" :options="stateChartOptions" :series="stateSeries"></apexchart>
+                </div>
               </div>
             </div>
 
             <div class="row">
               <div class="col-md-5">
-                  <div class="box radialbox mt-4">
-                      <div id="circlechart"> </div>
-                    </div>
+                <div class="box radialbox mt-4">
+                  <div id="circlechart"></div>
+                </div>
               </div>
               <div class="col-md-7">
-                  <div class="box mt-4">
-                    <div class="mt-4">
-                      <div id="progress1"></div>
-                    </div>
-                    <div class="mt-4">
-                      <div id="progress2"></div>
-                    </div>
-                    <div class="mt-4">
-                      <div id="progress3"></div>
-                    </div>
+                <div class="box mt-4">
+                  <div class="mt-4">
+                    <div id="progress1"></div>
                   </div>
+                  <div class="mt-4">
+                    <div id="progress2"></div>
+                  </div>
+                  <div class="mt-4">
+                    <div id="progress3"></div>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div class="row">
-              <div class="float-right edit-on-codepen">
-                
-              </div>
+              <div class="float-right edit-on-codepen"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import axios from 'axios'
+import { Component, Vue } from "vue-property-decorator";
+import axios from "axios";
+import dateformat from "dateformat";
 
 @Component({
-  components: {
-  },
+  components: {}
 })
 export default class App extends Vue {
-  chartData = []
-  loaded = false
+  loaded = false;
+  chartColors = [];
+  response;
+  date = [];
+  result;
+  buildPassed = [];
+  buildFailed = [];
 
-  chartOptions = {
-    chart : {
-      id : 'build-time-chart',
-      foreColor: '#fff',
+  buildChartOptions = {
+    chart: {
+      id: "build-time-chart",
+      foreColor: "#fff"
     },
     xaxis: {
       categories: []
     },
     title: {
-      text: 'Build duration',
-      align: 'left',
+      text: "Build duration",
+      align: "left",
       style: {
-        fontSize: '12px'
+        fontSize: "12px"
       }
     },
-  }
-  series = [{
-    name: 'Build duration',
-    data: []
-  }]
+    fill: {
+      colors: []
+    }
+  };
+  buildSeries = [
+    {
+      name: "Build duration",
+      data: []
+    }
+  ];
 
-  async mounted () {
-    await this.fetchData()
-    this.loaded = true
+  stateChartOptions = {
+    chart: {
+      id: "state-succes-chart",
+      foreColor: "#fff"
+    },
+    xaxis: {
+      categories: []
+    },
+    title: {
+      text: "Build States",
+      align: "left",
+      style: {
+        fontSize: "12px"
+      }
+    },
+    fill: {
+      colors: []
+    }
+  };
+
+  stateSeries = [
+    {
+      name: "Build Fails",
+      data: this.buildFailed,
+      colors: ["#ff0000"]
+    },
+    {
+      name: "Build Succes",
+      data: this.buildPassed
+    }
+  ];
+
+  async mounted() {
+    await this.fetchData();
+    this.loaded = true;
   }
 
   async fetchData() {
-    axios
-      .get('http://localhost:4000/build/')
+    await axios
+      .get("http://localhost:3000/build/")
       .then(response => {
-        if(response.data.length > 0) {
+        if (response.data.length > 0) {
           response.data.forEach(build => {
-            this.series[0].data.push(build.duration)
-            this.chartOptions.xaxis.categories.push(build.number)
+            const buildDate = new Date(build.started_at);
+            const formatedBuildDate = dateformat(buildDate, "yyyy-mm-dd");
+            this.date.push({ date: formatedBuildDate, state: build.state });
+            this.buildSeries[0].data.push(build.duration);
+            this.buildChartOptions.xaxis.categories.push(build.number);
+            if (build.state == "passed") {
+              this.buildChartOptions.fill.colors.push("#33cc33");
+            } else {
+              this.buildChartOptions.fill.colors.push("#ff0000");
+            }
           });
+          this.buildChartOptions.fill.colors.shift();
         }
       })
-      .catch((error) => console.log(error))
+      .catch(error => console.log(error));
+    this.getData();
   }
-  
+
+  getData() {
+    this.result = Object.values(
+      this.date.reduce((r, o) => {
+        r[o.date] = r[o.date] || { date: o.date, passed: 0, failed: 0 };
+        if (o.state === "passed") {
+          r[o.date].passed++;
+        } else {
+          r[o.date].failed++;
+        }
+
+        return r;
+      }, {})
+    );
+    this.pushBuildStateData();
+  }
+
+  pushBuildStateData() {
+    this.result.forEach(element => {
+      this.stateChartOptions.xaxis.categories.push(element.date);
+      this.buildPassed.push(element.passed);
+      this.buildFailed.push(element.failed);
+    });
+  }
 }
 </script>
 
 <style lang="scss">
-
 body {
-  background: #1B213B;
+  background: #1b213b;
   color: #777;
-  font-family:  Arial, sans-serif;
+  font-family: Arial, sans-serif;
   background-color: #1b213b !important;
 }
 
 .body-bg {
-  background: #F3F4FA !important;
+  background: #f3f4fa !important;
 }
 
-h1, h2, h3, h4, h5, h6, strong {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+strong {
   font-weight: 600;
 }
 
 .box .apexcharts-xaxistooltip {
-  background: #1B213B;
+  background: #1b213b;
   color: #fff;
 }
 
@@ -137,9 +218,9 @@ h1, h2, h3, h4, h5, h6, strong {
 }
 
 .box {
-  background-color: #262D47;
-  padding: 25px 25px; 
-  border-radius: 4px; 
+  background-color: #262d47;
+  padding: 25px 25px;
+  border-radius: 4px;
 }
 
 .columnbox {

@@ -6,7 +6,7 @@ const date = []
 
 async function getData() {
     response = await axios({
-        url: 'http://localhost:4000/build/25171564',
+        url: 'http://localhost:3000/build',
         method: 'get'
       })
     
@@ -31,4 +31,9 @@ async function getData() {
 }
 
 getData()
-
+  buildSeries = [
+    {
+      name: "Build duration",
+      data: []
+    }
+  ];
