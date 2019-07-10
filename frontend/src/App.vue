@@ -94,7 +94,7 @@ export default class App extends Vue {
 
   async fetchData() {
     axios
-      .get('http://localhost:3000/build/')
+      .get('http://localhost:4000/build/')
       .then(response => {
         if(response.data.length > 0) {
           response.data.forEach(build => {
