@@ -1,12 +1,11 @@
 <template>
   <div>
-     <apexchart type="bar" :options="buildChartOptions" :series="buildSeries"></apexchart>
+     <apexchart v-if="loaded" type="bar" :options="buildChartOptions" :series="buildSeries"></apexchart>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop  } from "vue-property-decorator";
-import axios from "axios";
 
 @Component({
   components: {},
@@ -19,6 +18,7 @@ import axios from "axios";
 export default class BuildDurationChart extends Vue {
     @Prop({default: 'response'})
     response
+    loaded = false
 
     buildChartOptions = {
         chart: {
@@ -33,11 +33,11 @@ export default class BuildDurationChart extends Vue {
         align: "left",
         style: {
             fontSize: "12px"
-        }
+        },
         },
         fill: {
         colors: []
-        }
+        },
     };
     buildSeries = [
         {
@@ -48,17 +48,19 @@ export default class BuildDurationChart extends Vue {
 
   async mounted() {
     if (this.response.data.length > 0) {
-          await this.response.data.forEach(build => {
-            this.buildSeries[0].data.push(build.duration);
-            this.buildChartOptions.xaxis.categories.push(build.number);
-            if (build.state == "passed") {
-              this.buildChartOptions.fill.colors.push("#33cc33");
-            } else {
-              this.buildChartOptions.fill.colors.push("#ff0000");
-            }
-          });
-          this.buildChartOptions.fill.colors.shift();
+        await this.response.data.forEach(build => {
+        this.buildSeries[0].data.push(build.duration);
+        this.buildChartOptions.xaxis.categories.push(build.number);
+        if (build.state == "passed") {
+            this.buildChartOptions.fill.colors.push("#33cc33");
+        } else {
+            this.buildChartOptions.fill.colors.push("#ff0000");
         }
+        });
+        this.buildChartOptions.fill.colors.shift();
+    }
+    this.loaded = true
   }
+  
 }
 </script>
