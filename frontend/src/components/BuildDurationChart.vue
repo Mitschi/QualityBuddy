@@ -53,11 +53,13 @@ export default class BuildDurationChart extends Vue {
         this.buildChartOptions.xaxis.categories.push(build.number);
         if (build.state == "passed") {
             this.buildChartOptions.fill.colors.push("#33cc33");
+            console.log("green")
         } else {
             this.buildChartOptions.fill.colors.push("#ff0000");
+            console.log("red")
         }
         });
-        this.buildChartOptions.fill.colors.shift();
+        
     }
     this.loaded = true
   }

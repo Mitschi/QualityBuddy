@@ -8,24 +8,21 @@
     />
 
     <div id="wrapper">
-      
-      
       <div class="content-area">
         <div class="container-fluid">
           <div class="main">
             <div class="row mt-4">
               <div class="col-md-5">
                 <div class="box columnbox mt-4">
-                  <BuildDurationChart v-if="loaded" :response="response"/>
+                  <BuildDurationChart v-if="loaded" :response="response" />
                 </div>
               </div>
               <div class="col-md-7">
                 <div class="box mt-4">
-                  <apexchart type="line" :options="stateChartOptions" :series="stateSeries"></apexchart>
+                  <BuildStateChart v-if="loaded" :response="response" />
                 </div>
               </div>
             </div>
-
             <div class="row">
               <div class="col-md-5">
                 <div class="box radialbox mt-4">
@@ -60,56 +57,19 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import axios from "axios";
-import dateformat from "dateformat";
-import BuildDurationChart from './components/BuildDurationChart.vue'
+
+import BuildDurationChart from "./components/BuildDurationChart.vue";
+import BuildStateChart from "./components/BuildStateChart.vue";
 
 @Component({
   components: {
-    BuildDurationChart
-  },
+    BuildDurationChart,
+    BuildStateChart
+  }
 })
 export default class App extends Vue {
   loaded = false;
-  chartColors = [];
   response;
-  date = [];
-  result;
-  buildPassed = [];
-  buildFailed = [];
-
-  
-
-  stateChartOptions = {
-    chart: {
-      id: "state-succes-chart",
-      foreColor: "#fff"
-    },
-    xaxis: {
-      categories: []
-    },
-    title: {
-      text: "Build States",
-      align: "left",
-      style: {
-        fontSize: "12px"
-      }
-    },
-    fill: {
-      colors: []
-    }
-  };
-
-  stateSeries = [
-    {
-      name: "Build Fails",
-      data: this.buildFailed,
-      colors: ["#ff0000"]
-    },
-    {
-      name: "Build Succes",
-      data: this.buildPassed
-    }
-  ];
 
   async mounted() {
     await this.fetchData();
@@ -118,43 +78,11 @@ export default class App extends Vue {
 
   async fetchData() {
     await axios
-      .get("http://localhost:4000/build/")
+      .get("http://localhost:3000/build/")
       .then(response => {
-        if (response.data.length > 0) {
-          response.data.forEach(build => {
-            const buildDate = new Date(build.started_at);
-            const formatedBuildDate = dateformat(buildDate, "yyyy-mm-dd");
-            this.date.push({ date: formatedBuildDate, state: build.state });
-          });
-          this.response = response
-        }
+        this.response = response
       })
       .catch(error => console.log(error));
-    this.getData();
-  }
-
-  getData() {
-    this.result = Object.values(
-      this.date.reduce((r, o) => {
-        r[o.date] = r[o.date] || { date: o.date, passed: 0, failed: 0 };
-        if (o.state === "passed") {
-          r[o.date].passed++;
-        } else {
-          r[o.date].failed++;
-        }
-
-        return r;
-      }, {})
-    );
-    this.pushBuildStateData();
-  }
-
-  pushBuildStateData() {
-    this.result.forEach(element => {
-      this.stateChartOptions.xaxis.categories.push(element.date);
-      this.buildPassed.push(element.passed);
-      this.buildFailed.push(element.failed);
-    });
   }
 }
 </script>
