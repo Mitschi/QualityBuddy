@@ -8,6 +8,7 @@ import { HttpExceptionFilter } from '../shared/http-exception.filter';
 import { LoggingInterceptor } from '../shared/logging.interceptor';
 import { ScheduleModule } from 'nest-schedule';
 import { RepoModule } from '../repo/repo.module';
+import { FetchingService } from '../shared/fetching.service';
 
 @Module({
   imports:
@@ -19,6 +20,7 @@ import { RepoModule } from '../repo/repo.module';
   ],
   providers: [
     BuildService,
+    FetchingService,
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,

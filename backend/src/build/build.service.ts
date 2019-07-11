@@ -1,8 +1,7 @@
-import { Injectable, HttpService, OnModuleInit, OnModuleDestroy, Logger  } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy, Logger  } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Build } from '../types/build';
-import { BuildDTO } from './build.dto';
 import { InjectSchedule, Schedule } from 'nest-schedule';
 import { RepoService } from '../repo/repo.service';
 import * as crypto from 'crypto-js';
@@ -10,15 +9,16 @@ import 'dotenv/config';
 import { RepoTypes } from '../shared/repo.types';
 import { Repo } from '../types/repo';
 import { editBuddyBuildData, editTravisBuildData } from '../shared/editing-builds';
+import { FetchingService } from '../shared/fetching.service';
 
-const FETCHING_TIME: number = 60000;
+const FETCHING_TIME: number = 10000;
 
 @Injectable()
 export class BuildService implements OnModuleDestroy, OnModuleInit {
     constructor(@InjectModel('Build') private buildModel: Model<Build>,
                 @InjectSchedule() private readonly schedule: Schedule,
-                private httpService: HttpService,
-                private readonly repoService: RepoService) {}
+                private readonly repoService: RepoService,
+                private fetchingService: FetchingService) {}
 
     onModuleInit() {
         this.startBuildFetching();
@@ -43,20 +43,9 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
         const decryptToken = await crypto.AES.decrypt(repo.token, process.env.ENCRYPTION_SECRET);
         let response;
         if (repo.type === RepoTypes.TRAVIS) {
-            response = await this.httpService.get(`https://api.travis-ci.org/repo/${repo.id}/builds`, {
-            headers: {
-                'Authorization': `token ${decryptToken.toString(crypto.enc.Utf8)}`,
-                'Travis-API-Version': 3,
-            },
-            }).toPromise();
+            response = await this.fetchingService.fetchTravisBuild(repo, decryptToken);
         } else if (repo.type === RepoTypes.BUDDY) {
-            response = await this.httpService.get(
-                `https://api.buddy.works/workspaces/${repo.workspace}/projects/${repo.name}/pipelines/${repo.id}/executions`, {
-                headers: {
-                    'Authorization': `Bearer ${decryptToken.toString(crypto.enc.Utf8)}`,
-                    'Content-Type': 'application/json',
-                },
-            }).toPromise();
+            response = await this.fetchingService.fetchBuddyBuild(repo, decryptToken);
         }
 
         const builds = await this.editingBuildData(response, repo.type, repo.id);
