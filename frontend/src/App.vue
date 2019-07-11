@@ -8,13 +8,15 @@
     />
 
     <div id="wrapper">
+      
+      
       <div class="content-area">
         <div class="container-fluid">
           <div class="main">
             <div class="row mt-4">
               <div class="col-md-5">
                 <div class="box columnbox mt-4">
-                  <apexchart type="bar" :options="buildChartOptions" :series="buildSeries"></apexchart>
+                  <BuildDurationChart v-if="loaded" :response="response"/>
                 </div>
               </div>
               <div class="col-md-7">
@@ -59,9 +61,12 @@
 import { Component, Vue } from "vue-property-decorator";
 import axios from "axios";
 import dateformat from "dateformat";
+import BuildDurationChart from './components/BuildDurationChart.vue'
 
 @Component({
-  components: {}
+  components: {
+    BuildDurationChart
+  },
 })
 export default class App extends Vue {
   loaded = false;
@@ -72,31 +77,7 @@ export default class App extends Vue {
   buildPassed = [];
   buildFailed = [];
 
-  buildChartOptions = {
-    chart: {
-      id: "build-time-chart",
-      foreColor: "#fff"
-    },
-    xaxis: {
-      categories: []
-    },
-    title: {
-      text: "Build duration",
-      align: "left",
-      style: {
-        fontSize: "12px"
-      }
-    },
-    fill: {
-      colors: []
-    }
-  };
-  buildSeries = [
-    {
-      name: "Build duration",
-      data: []
-    }
-  ];
+  
 
   stateChartOptions = {
     chart: {
@@ -137,22 +118,15 @@ export default class App extends Vue {
 
   async fetchData() {
     await axios
-      .get("http://localhost:3000/build/")
+      .get("http://localhost:4000/build/")
       .then(response => {
         if (response.data.length > 0) {
           response.data.forEach(build => {
             const buildDate = new Date(build.started_at);
             const formatedBuildDate = dateformat(buildDate, "yyyy-mm-dd");
             this.date.push({ date: formatedBuildDate, state: build.state });
-            this.buildSeries[0].data.push(build.duration);
-            this.buildChartOptions.xaxis.categories.push(build.number);
-            if (build.state == "passed") {
-              this.buildChartOptions.fill.colors.push("#33cc33");
-            } else {
-              this.buildChartOptions.fill.colors.push("#ff0000");
-            }
           });
-          this.buildChartOptions.fill.colors.shift();
+          this.response = response
         }
       })
       .catch(error => console.log(error));
