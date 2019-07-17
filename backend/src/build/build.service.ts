@@ -11,6 +11,7 @@ import { Repo } from '../types/repo';
 import { editBuddyBuildData, editTravisBuildData } from '../shared/editing-builds';
 import { FetchingService } from '../shared/fetching.service';
 import { AxiosResponse } from 'axios';
+import { Sonarqube } from '../types/sonarqube';
 
 const FETCHING_TIME: number = 10000;
 
@@ -95,11 +96,33 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
     async fetchCodeMetric(repo: Repo) {
         const decryptToken = await crypto.AES.decrypt(repo.token, process.env.ENCRYPTION_SECRET);
         const response = await this.fetchingService.fetchSonarQubeCodeMetric(repo, decryptToken);
-        console.log(response.data);
         const metric = await this.editSonarqubeResponse(response);
+        this.saveSonarqubeMetric(metric);
     }
 
     async editSonarqubeResponse(response: AxiosResponse) {
+        const measures = response.data.component.measures;
+
+        const sonarqubeMetric: Sonarqube = {
+            id: response.data.component.id,
+            name: response.data.component.name,
+            violations: 0,
+            lineCoverage: 0,
+            files: 0,
+            numberOfLines: 0,
+            bugs: 0,
+            lastCommitDate: Date.now(),
+            status: '',
+        };
+
+        measures.forEach(element => {
+            sonarqubeMetric[element.metric] = element.value;
+        });
+
+        console.log(sonarqubeMetric);
+    }
+
+    async saveSonarqubeMetric(metric: Sonarqube) {
 
     }
 
