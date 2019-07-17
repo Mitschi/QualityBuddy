@@ -18,6 +18,7 @@ const FETCHING_TIME: number = 10000;
 @Injectable()
 export class BuildService implements OnModuleDestroy, OnModuleInit {
     constructor(@InjectModel('Build') private buildModel: Model<Build>,
+                @InjectModel('Sonarqube') private sonarqubeModel: Model<Sonarqube>,
                 @InjectSchedule() private readonly schedule: Schedule,
                 private readonly repoService: RepoService,
                 private fetchingService: FetchingService) {}
@@ -100,7 +101,7 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
         this.saveSonarqubeMetric(metric);
     }
 
-    async editSonarqubeResponse(response: AxiosResponse) {
+    async editSonarqubeResponse(response: AxiosResponse): Promise<Sonarqube> {
         const measures = response.data.component.measures;
 
         const sonarqubeMetric: Sonarqube = {
@@ -120,10 +121,19 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
         });
 
         console.log(sonarqubeMetric);
+        return sonarqubeMetric;
     }
 
-    async saveSonarqubeMetric(metric: Sonarqube) {
-
+    async saveSonarqubeMetric(metricData: Sonarqube) {
+        const sonarqubeMetric = this.sonarqubeModel.findOne({id: metricData.id});
+        if (sonarqubeMetric) {
+            await this.sonarqubeModel.findOneAndUpdate({id: metricData.id}, metricData);
+            Logger.log('Updated sonarqube metric', 'saveSonarqubeMetric');
+        } else {
+            const saveMetricData = await this.sonarqubeModel.create(metricData);
+            saveMetricData.save();
+            Logger.log('Created sonarqube metric', 'saveSonarqubeMetric');
+        }
     }
 
     async findAll(): Promise<Build[]> {

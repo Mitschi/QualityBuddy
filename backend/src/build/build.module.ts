@@ -9,11 +9,13 @@ import { LoggingInterceptor } from '../shared/logging.interceptor';
 import { ScheduleModule } from 'nest-schedule';
 import { RepoModule } from '../repo/repo.module';
 import { FetchingService } from '../shared/fetching.service';
+import { SonarqubeSchema } from '../models/sonarqube.schema';
 
 @Module({
   imports:
   [
     MongooseModule.forFeature([{name: 'Build', schema: BuildSchema}]),
+    MongooseModule.forFeature([{name: 'Sonarqube', schema: SonarqubeSchema}]),
     HttpModule,
     ScheduleModule.register(),
     RepoModule,
