@@ -10,6 +10,7 @@ import { RepoTypes } from '../shared/repo.types';
 import { Repo } from '../types/repo';
 import { editBuddyBuildData, editTravisBuildData } from '../shared/editing-builds';
 import { FetchingService } from '../shared/fetching.service';
+import { AxiosResponse } from 'axios';
 
 const FETCHING_TIME: number = 10000;
 
@@ -83,8 +84,23 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
         Logger.log('Fetching Repo builds', 'getRepositories');
         const repos = await this.repoService.findAll();
         repos.forEach((repo) => {
-            this.fetchBuilds(repo);
+            if (repo.type === RepoTypes.SONAR) {
+                this.fetchCodeMetric(repo);
+            } else {
+                this.fetchBuilds(repo);
+            }
         });
+    }
+
+    async fetchCodeMetric(repo: Repo) {
+        const decryptToken = await crypto.AES.decrypt(repo.token, process.env.ENCRYPTION_SECRET);
+        const response = await this.fetchingService.fetchSonarQubeCodeMetric(repo, decryptToken);
+        console.log(response.data);
+        const metric = await this.editSonarqubeResponse(response);
+    }
+
+    async editSonarqubeResponse(response: AxiosResponse) {
+
     }
 
     async findAll(): Promise<Build[]> {

@@ -25,4 +25,15 @@ export class FetchingService {
             },
         }).toPromise();
     }
+
+    async fetchSonarQubeCodeMetric(repo: Repo, decryptToken): Promise<AxiosResponse> {
+        console.log('Fetching build');
+        return await this.httpService.get(
+            `http://${repo.workspace}:9000/api/measures/component?metricKeys=ncloc,complexity,violations&componentKey=${repo.name}`, {
+            headers: {
+                'Authorization': `Basic ${decryptToken.toString(crypto.enc.Utf8)}`,
+                'Content-Type': 'application/json',
+            },
+        }).toPromise();
+    }
 }
