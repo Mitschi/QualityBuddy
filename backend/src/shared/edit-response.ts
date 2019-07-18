@@ -2,6 +2,7 @@ import { Build } from '../types/build';
 import { BuildDTO } from '../build/build.dto';
 import { AxiosResponse } from 'axios';
 import { Sonarqube } from '../types/sonarqube';
+import { SonarqubeDTO } from '../sonarqube/sonarqube.dto';
 
 export async function editTravisBuildData(response: AxiosResponse): Promise<Build[]> {
     const builds = [];
@@ -55,7 +56,7 @@ export async function editBuddyBuildData(response: AxiosResponse, repoId: string
     return builds;
 }
 
-export async function editSonarqubeResponse(response: AxiosResponse): Promise<Sonarqube> {
+export async function editSonarqubeResponse(response: AxiosResponse): Promise<SonarqubeDTO> {
     const measures = response.data.component.measures;
 
     const sonarqubeMetric: Sonarqube = {
