@@ -8,12 +8,11 @@ import * as crypto from 'crypto-js';
 import 'dotenv/config';
 import { RepoTypes } from '../shared/repo.types';
 import { Repo } from '../types/repo';
-import { editBuddyBuildData, editTravisBuildData } from '../shared/editing-builds';
+import { editBuddyBuildData, editTravisBuildData, editSonarqubeResponse } from '../shared/edit-response';
 import { FetchingService } from '../shared/fetching.service';
-import { AxiosResponse } from 'axios';
 import { Sonarqube } from '../types/sonarqube';
 
-const FETCHING_TIME: number = 10000;
+const FETCHING_TIME: number = 60000;
 
 @Injectable()
 export class BuildService implements OnModuleDestroy, OnModuleInit {
@@ -67,7 +66,7 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
     private async saveValidBuilds(builds: Build[], repoId: string) {
         const lastSavedBuild = await this.buildModel.find({repo_id: repoId}).sort({number: -1}).limit(1);
         builds.forEach((build) => {
-            if (lastSavedBuild[0] == undefined || lastSavedBuild[0] == null) {
+            if (lastSavedBuild[0] === undefined || lastSavedBuild[0] == null) {
                 this.saveBuild(build);
             } else if (build.number > lastSavedBuild[0].number) {
                 this.saveBuild(build);
@@ -97,30 +96,8 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
     async fetchCodeMetric(repo: Repo) {
         const decryptToken = await crypto.AES.decrypt(repo.token, process.env.ENCRYPTION_SECRET);
         const response = await this.fetchingService.fetchSonarQubeCodeMetric(repo, decryptToken);
-        const metric = await this.editSonarqubeResponse(response);
+        const metric = await editSonarqubeResponse(response);
         this.saveSonarqubeMetric(metric);
-    }
-
-    async editSonarqubeResponse(response: AxiosResponse): Promise<Sonarqube> {
-        const measures = response.data.component.measures;
-
-        const sonarqubeMetric: Sonarqube = {
-            id: response.data.component.id,
-            name: response.data.component.name,
-            violations: 0,
-            line_coverage: 0,
-            files: 0,
-            ncloc: 0,
-            bugs: 0,
-            last_commit_date: Date.now(),
-            alert_status: '',
-        };
-
-        measures.forEach(element => {
-            sonarqubeMetric[element.metric] = element.value;
-        });
-
-        return sonarqubeMetric;
     }
 
     async saveSonarqubeMetric(metricData: Sonarqube) {
