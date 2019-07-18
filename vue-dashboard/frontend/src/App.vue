@@ -3,6 +3,19 @@
     <hello-world></hello-world>
   </div>
 </template>
+<script>
+
+
+
+
+
+export default {
+  name: 'App',
+  components: {
+    SideBar
+  }
+}
+</script>
 
 <style lang="scss">
 #app {
