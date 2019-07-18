@@ -5,10 +5,10 @@ export interface Sonarqube extends Document {
     name: string;
     violations: number;
     metric: number;
-    lineCoverage: number;
+    line_coverage: number;
     files: number;
-    numberOfLines: number;
+    ncloc: number;
     bugs: number;
-    lastCommitDate: Date;
-    status: string;
+    last_commit_date: Date;
+    alert_status: string;
 }

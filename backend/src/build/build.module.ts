@@ -14,8 +14,7 @@ import { SonarqubeSchema } from '../models/sonarqube.schema';
 @Module({
   imports:
   [
-    MongooseModule.forFeature([{name: 'Build', schema: BuildSchema}]),
-    MongooseModule.forFeature([{name: 'Sonarqube', schema: SonarqubeSchema}]),
+    MongooseModule.forFeature([{name: 'Build', schema: BuildSchema}, {name: 'Sonarqube', schema: SonarqubeSchema}]),
     HttpModule,
     ScheduleModule.register(),
     RepoModule,

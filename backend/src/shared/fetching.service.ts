@@ -27,7 +27,6 @@ export class FetchingService {
     }
 
     async fetchSonarQubeCodeMetric(repo: Repo, decryptToken): Promise<AxiosResponse> {
-        console.log('Fetching build');
         return await this.httpService.get(
             `http://${repo.workspace}:9000/api/measures/component?metricKeys=alert_status,line_coverage,ncloc,violations,bugs,last_commit_date,files&componentKey=${repo.name}`, {
             headers: {

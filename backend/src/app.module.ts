@@ -5,6 +5,7 @@ import { BuildModule } from './build/build.module';
 import { RepoModule } from './repo/repo.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DatabaseModule } from './database/database.module';
+import { SonarqubeModule } from './sonarqube/sonarqube.module';
 import 'dotenv/config';
 
 @Module({
@@ -13,6 +14,7 @@ import 'dotenv/config';
     DatabaseModule,
     BuildModule,
     RepoModule,
+    SonarqubeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

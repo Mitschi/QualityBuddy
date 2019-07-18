@@ -108,25 +108,24 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
             id: response.data.component.id,
             name: response.data.component.name,
             violations: 0,
-            lineCoverage: 0,
+            line_coverage: 0,
             files: 0,
-            numberOfLines: 0,
+            ncloc: 0,
             bugs: 0,
-            lastCommitDate: Date.now(),
-            status: '',
+            last_commit_date: Date.now(),
+            alert_status: '',
         };
 
         measures.forEach(element => {
             sonarqubeMetric[element.metric] = element.value;
         });
 
-        console.log(sonarqubeMetric);
         return sonarqubeMetric;
     }
 
     async saveSonarqubeMetric(metricData: Sonarqube) {
-        const sonarqubeMetric = this.sonarqubeModel.findOne({id: metricData.id});
-        if (sonarqubeMetric) {
+        const sonarqubeMetric = await this.sonarqubeModel.findOne({id: metricData.id});
+        if (sonarqubeMetric && sonarqubeMetric !== null) {
             await this.sonarqubeModel.findOneAndUpdate({id: metricData.id}, metricData);
             Logger.log('Updated sonarqube metric', 'saveSonarqubeMetric');
         } else {
