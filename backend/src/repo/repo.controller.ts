@@ -2,7 +2,9 @@ import { Controller, Get, Body, Post, Delete, Param } from '@nestjs/common';
 import { RepoService } from './repo.service';
 import { Repo } from 'src/types/repo';
 import { RepoDto } from './repo.dto';
+import { ApiUseTags } from '@nestjs/swagger';
 
+@ApiUseTags('repo')
 @Controller('repo')
 export class RepoController {
     constructor(private repoService: RepoService) {}

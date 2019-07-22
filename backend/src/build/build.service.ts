@@ -11,6 +11,7 @@ import { Repo } from '../types/repo';
 import { editBuddyBuildData, editTravisBuildData, editSonarqubeResponse } from '../shared/edit-response';
 import { FetchingService } from '../shared/fetching.service';
 import { Sonarqube } from '../types/sonarqube';
+import { SonarqubeDTO } from 'src/sonarqube/sonarqube.dto';
 
 const FETCHING_TIME: number = 60000;
 
@@ -100,7 +101,7 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
         this.saveSonarqubeMetric(metric);
     }
 
-    async saveSonarqubeMetric(metricData: Sonarqube) {
+    async saveSonarqubeMetric(metricData: SonarqubeDTO) {
         const sonarqubeMetric = await this.sonarqubeModel.findOne({id: metricData.id});
         if (sonarqubeMetric && sonarqubeMetric !== null) {
             await this.sonarqubeModel.findOneAndUpdate({id: metricData.id}, metricData);
@@ -116,7 +117,7 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
         return this.buildModel.find();
     }
 
-    async listBuildsByRepo(id: string) {
+    async listBuildsByRepo(id: string): Promise<Build[]> {
         return await this.buildModel.find({repo_id: id});
     }
 

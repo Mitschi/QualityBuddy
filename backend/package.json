@@ -24,6 +24,7 @@
     "@nestjs/core": "^6.0.0",
     "@nestjs/mongoose": "^6.1.2",
     "@nestjs/platform-express": "^6.0.0",
+    "@nestjs/swagger": "^3.1.0",
     "@types/mongoose": "^5.5.7",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.9.1",
@@ -34,7 +35,8 @@
     "nest-schedule": "^0.6.2",
     "reflect-metadata": "^0.1.12",
     "rimraf": "^2.6.2",
-    "rxjs": "^6.3.3"
+    "rxjs": "^6.3.3",
+    "swagger-ui-express": "^4.0.7"
   },
   "devDependencies": {
     "@nestjs/testing": "^6.4.0",
@@ -43,7 +45,7 @@
     "@types/node": "^10.12.18",
     "@types/supertest": "^2.0.7",
     "concurrently": "^4.1.0",
-    "jest": "^23.6.0",
+    "jest": "^24.8.0",
     "nodemon": "^1.18.9",
     "prettier": "^1.15.3",
     "supertest": "^3.4.1",
