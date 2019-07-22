@@ -1,7 +1,9 @@
 import { Controller, Get, Delete, Param } from '@nestjs/common';
 import { SonarqubeService } from './sonarqube.service';
 import { Sonarqube } from '../types/sonarqube';
+import { ApiUseTags } from '@nestjs/swagger';
 
+@ApiUseTags('sonarqube')
 @Controller('sonarqube')
 export class SonarqubeController {
     constructor(private sonarqubeService: SonarqubeService) {}

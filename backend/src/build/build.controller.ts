@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Delete, Param } from '@nestjs/common';
 import { BuildService } from './build.service';
+import { ApiUseTags } from '@nestjs/swagger';
 
+@ApiUseTags('build')
 @Controller('build')
 export class BuildController {
     constructor(private buildService: BuildService) {}
