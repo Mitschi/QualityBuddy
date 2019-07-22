@@ -35,7 +35,7 @@ export class RepoService {
         return this.repoModel.remove({});
     }
 
-    async deleteOne(id: string) {
+    async deleteOne(id: string): Promise<Repo> {
         return this.repoModel.findByIdAndRemove(id);
     }
 

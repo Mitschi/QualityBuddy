@@ -11,13 +11,13 @@ export class RepoController {
 
     @ApiResponse({ status: 200, description: 'Successfully fetched all repos'})
     @Get()
-    findAll(): Promise<Repo[]> {
+    findAllRepos(): Promise<Repo[]> {
         return this.repoService.findAll();
     }
 
     @ApiResponse({ status: 200, description: 'Successfully fetched repo'})
     @Get(':id')
-    findOne(@Param('id') id: string): Promise<Repo> {
+    findRepo(@Param('id') id: string): Promise<Repo> {
         return this.repoService.findOne(id);
     }
 
@@ -30,13 +30,13 @@ export class RepoController {
 
     @ApiResponse({ status: 200, description: 'Successfully deleted all repos'})
     @Delete()
-    deleteAll() {
+    deleteAllRepos() {
         return this.repoService.deleteAll();
     }
 
     @ApiResponse({ status: 200, description: 'Successfully deleted repo'})
     @Delete(':id')
-    deleteOne(@Param('id') id: string) {
+    deleteRepo(@Param('id') id: string): Promise<Repo> {
         return this.repoService.deleteOne(id);
     }
 }

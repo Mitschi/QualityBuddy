@@ -10,7 +10,7 @@ export class BuildController {
 
     @ApiResponse({ status: 200, description: 'Successfully fetched all builds'})
     @Get()
-    async findAll(): Promise<Build[]> {
+    async getAllBuilds(): Promise<Build[]> {
         return this.buildService.findAll();
     }
 
@@ -22,7 +22,7 @@ export class BuildController {
 
     @ApiResponse({ status: 200, description: 'Deleted all builds'})
     @Delete()
-    async deleteAll() {
+    async deleteAllBuilds() {
         return this.buildService.deleteAll();
     }
 }
