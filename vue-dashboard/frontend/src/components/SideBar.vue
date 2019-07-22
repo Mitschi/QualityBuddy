@@ -1,49 +1,20 @@
 <template lang="html">
 
-  <div id="parentx">
+    <div>
+      <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" v-on:click="closeNav">&times;</a>
+      <a href="#">About</a>
+      <a href="#">Services</a>
+      <a href="#">Clients</a>
+      <a href="#">Contact</a>
+    </div>
 
-    <vs-button @click="active=!active" color="primary" type="filled">Open Sidebar</vs-button>
-    <vs-sidebar parent="body" default-index="1"  color="primary" class="sidebarx" spacer v-model="active">
+    <header >
+      <span id="main-span" style="font-size: 30px; cursor: pointer" v-on:click="openNav">&#9776;</span>
+      QUALITYBUDDY
 
-      <div class="header-sidebar" slot="header">
-        <vs-avatar  size="70px" src="https://randomuser.me/api/portraits/men/85.jpg"/>
-
-        <h4>
-          My Name
-          <vs-button color="primary" icon="more_horiz" type="flat"></vs-button>
-        </h4>
-
-      </div>
-
-      <vs-sidebar-item index="1" icon="question_answer">
-        Dashboard
-      </vs-sidebar-item>
-
-      <vs-sidebar-item index="2" icon="gavel">
-        History
-      </vs-sidebar-item>
-
-      <vs-divider icon="person" position="left">
-        User
-      </vs-divider>
-
-      <vs-sidebar-item index="3" icon="verified_user">
-        Configurations
-      </vs-sidebar-item>
-      <vs-sidebar-item index="4" icon="account_box">
-        Profile
-      </vs-sidebar-item>
-      <vs-sidebar-item index="5" >
-        Card
-      </vs-sidebar-item>
-
-      <div class="footer-sidebar" slot="footer">
-        <vs-button icon="reply" color="danger" type="flat">log out</vs-button>
-        <vs-button icon="settings" color="primary" type="border"></vs-button>
-      </div>
-
-    </vs-sidebar>
-  </div>
+    </header>
+    </div>
 
 </template>
 
@@ -51,31 +22,81 @@
 export default {
   data:()=>({
     active:false,
-  })
+  }),
+  methods: {
+    openNav: function() {
+          document.getElementById("mySidenav").style.width = "250px";
+        },
+        closeNav: function() {
+          document.getElementById("mySidenav").style.width = "0";
+        }
+  }
 }
+  
+
 </script>
 
-<style lang="stylus">
-.header-sidebar
-  display flex
-  align-items center
-  justify-content center
-  flex-direction column
-  width 100%
-  h4
-    display flex
-    align-items center
-    justify-content center
-    width 100%
-    > button
-      margin-left 10px
-.footer-sidebar
-  display flex
-  align-items center
-  justify-content space-between
-  width 100%
-  > button
-      border 0px solid rgba(0,0,0,0) !important
-      border-left 1px solid rgba(0,0,0,.07) !important
-      border-radius 0px !important
-</style>
+<style type="text/css">
+        
+        body {
+          font-family: "Lato", sans-serif;
+        }
+        *{
+          padding: 0px;
+          margin: 0px;
+        }
+
+        header{
+          font-size: 29px;
+          background-color: darkorange;
+          color: white;
+          padding: 16px;
+          font-family: Arial;
+          text-align: center;
+        }
+
+        #main-span{
+          vertical-align: 50%;
+          float: left;
+        }
+
+        .sidenav {
+          height: 100%;
+          width: 0;
+          position: fixed;
+          z-index: 1;
+          top: 0;
+          left: 0;
+          background-color: #111;
+          overflow-x: hidden;
+          transition: 0.5s;
+          padding-top: 60px;
+        }
+
+        .sidenav a {
+          padding: 8px 8px 8px 32px;
+          text-decoration: none;
+          font-size: 25px;
+          color: #818181;
+          display: block;
+          transition: 0.3s;
+        }
+
+        .sidenav a:hover {
+          color: orange;
+        }
+
+        .sidenav .closebtn {
+          position: absolute;
+          top: 0;
+          right: 25px;
+          font-size: 36px;
+          margin-left: 50px;
+        }
+
+        @media screen and (max-height: 450px) {
+          .sidenav {padding-top: 15px;}
+          .sidenav a {font-size: 18px;}
+        }
+  
+      </style>
