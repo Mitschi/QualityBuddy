@@ -15,7 +15,6 @@ async function bootstrap() {
   .setTitle('QualityBuddy Backend')
   .setDescription('Backend for the QualityBuddy application which saves the builds and sonarqube project infos')
   .setVersion('1.0')
-  .addTag('nest')
   .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
