@@ -117,7 +117,7 @@ export class BuildService implements OnModuleDestroy, OnModuleInit {
         return this.buildModel.find();
     }
 
-    async listBuildsByRepo(id: string) {
+    async listBuildsByRepo(id: string): Promise<Build[]> {
         return await this.buildModel.find({repo_id: id});
     }
 

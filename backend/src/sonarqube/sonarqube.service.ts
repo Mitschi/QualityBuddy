@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Sonarqube } from '../types/sonarqube';
@@ -12,7 +12,11 @@ export class SonarqubeService {
     }
 
     async findOne(id: string): Promise<Sonarqube> {
-        return await this.sonarqubeModel.findOne({id});
+        const metric = await this.sonarqubeModel.findOne({id});
+        if (!metric) {
+            throw new HttpException('Metric not found', HttpStatus.BAD_REQUEST);
+        }
+        return metric;
     }
 
     async deleteAll() {
@@ -20,6 +24,10 @@ export class SonarqubeService {
     }
 
     async deleteOne(id: string) {
-        return this.sonarqubeModel.findByIdAndRemove(id);
+        const metric = await this.sonarqubeModel.findOne({id});
+        if (!metric) {
+            throw new HttpException('Metric not found', HttpStatus.BAD_REQUEST);
+        }
+        return await this.sonarqubeModel.deleteOne(metric);
     }
 }
