@@ -41,11 +41,11 @@ export default class BuildDurationChart extends Vue {
         () => {
           if (this.chartColors[0] == "passed") {
             this.chartColors.shift();
-            console.log(this.chartColors)
+            console.log(this.chartColors);
             return "#33cc33";
           } else {
-            this.chartColors.shift()
-            console.log(this.chartColors)
+            this.chartColors.shift();
+            console.log(this.chartColors);
             return "#ff0000";
           }
         }
@@ -65,14 +65,14 @@ export default class BuildDurationChart extends Vue {
         this.buildSeries[0].data.push(build.duration);
         this.buildChartOptions.xaxis.categories.push(build.number);
         //if (build.state == "passed") {
-          //this.buildChartOptions.fill.colors.push("#33cc33");
-          this.chartColors.push(build.state);
-       // } else {
-          //this.buildChartOptions.fill.colors.push("#ff0000");
-          //this.chartColors.push("#ff0000");
-      //  }
+        //this.buildChartOptions.fill.colors.push("#33cc33");
+        this.chartColors.push(build.state);
+        // } else {
+        //this.buildChartOptions.fill.colors.push("#ff0000");
+        //this.chartColors.push("#ff0000");
+        //  }
       });
-      console.log(this.chartColors)
+      console.log(this.chartColors);
       this.loaded = true;
     }
   }

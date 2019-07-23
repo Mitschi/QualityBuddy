@@ -10,7 +10,7 @@
     </div>
 
     <header >
-      <span id="main-span" style="font-size: 30px; cursor: pointer" v-on:click="openNav">&#9776;</span>
+      <span id="main-span" style="font-size: 30px; cursor: pointer" v-on:click="openNav"><img src="../assets/sidebarlogo.png"></span>
       QUALITYBUDDY
 
     </header>
