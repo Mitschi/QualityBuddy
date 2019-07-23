@@ -48,7 +48,7 @@ export default {
 
         header{
           font-size: 29px;
-          background-color: darkorange;
+          background-color: black;
           color: white;
           padding: 16px;
           font-family: Arial;
@@ -77,13 +77,13 @@ export default {
           padding: 8px 8px 8px 32px;
           text-decoration: none;
           font-size: 25px;
-          color: #818181;
+          color: white;
           display: block;
           transition: 0.3s;
         }
 
         .sidenav a:hover {
-          color: orange;
+          color: white;
         }
 
         .sidenav .closebtn {
