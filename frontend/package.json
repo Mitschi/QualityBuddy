@@ -13,6 +13,8 @@
     "chart.js": "^2.8.0",
     "core-js": "^2.6.5",
     "dateformat": "^3.0.3",
+    "pg": "^7.11.0",
+    "ramda": "^0.26.1",
     "vue": "^2.6.10",
     "vue-apexcharts": "^1.4.0",
     "vue-class-component": "^7.0.2",
