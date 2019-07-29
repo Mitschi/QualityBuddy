@@ -57,6 +57,8 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import axios from "axios";
+import Client from "pg";
+import Pool from "pg";
 
 import BuildDurationChart from "./components/BuildDurationChart.vue";
 import BuildStateChart from "./components/BuildStateChart.vue";
@@ -70,6 +72,7 @@ import BuildStateChart from "./components/BuildStateChart.vue";
 export default class App extends Vue {
   loaded = false;
   response;
+  result;
 
   async mounted() {
     await this.fetchData();
@@ -80,9 +83,30 @@ export default class App extends Vue {
     await axios
       .get("http://localhost:3000/build/")
       .then(response => {
-        this.response = response
+        this.response = response;
       })
       .catch(error => console.log(error));
+  }
+
+  async getTemperature() {
+    const { Client } = require("pg");
+    const R = require("ramda");
+
+    const client = new Client({
+      user: "postgres",
+      host: "localhost",
+      database: "temperatur",
+      password: "123456",
+      port: 5432
+    });
+    client.connect();
+
+    client
+      .query("SELECT * from temperatur")
+      .then(res => {
+       this.result = res.rows;
+      })
+      .finally(() => client.end());
   }
 }
 </script>
