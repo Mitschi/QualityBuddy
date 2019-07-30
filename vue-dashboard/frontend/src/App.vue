@@ -1,25 +1,27 @@
 <template>
-  <div id="app">
+  <div id="App">
     <SideBar/>
-    <!-- <testchart/> -->
+    <barGraph/>
   </div>
 </template>
 
+
+
 <script>
 import SideBar from './components/SideBar'
-//import testchart from './fakecomponents/testchart'
+import barGraph from './components/barGraph'
+
 
 export default {
   name: 'App',
   components: {
     SideBar,
-   // testchart
+    barGraph
   }
 }
 
 
+
+
 </script>
 
-<style>
-
-</style>

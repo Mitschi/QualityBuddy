@@ -1,0 +1,291 @@
+<html>
+    <head>
+            
+            <meta charset="utf-8"/>
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+        <style>
+            @import url(https://fonts.googleapis.com/css?family=Roboto);
+
+            body {
+            font-family: Roboto, sans-serif;
+            }
+
+            #chart {
+            max-width: 650px;
+            float: right;
+            }
+
+            #chart2 {
+            max-width: 650px;
+            float: right;
+            }
+
+            #checkbox {
+                width: 200px;
+                margin: 50px;
+                position: relative;
+                float: right;
+
+            }
+            
+
+            body {
+            font-family: "Lato", sans-serif;
+            }
+            * {
+            padding: 0px;
+            margin: 0px;
+            }
+
+            header {
+            font-size: 29px;
+            background-color: black;
+            color: white;
+            padding: 16px;
+            font-family: Arial;
+            text-align: center;
+            }
+
+            #main-span {
+            vertical-align: 50%;
+            float: left;
+            }
+
+            .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+            }
+
+            .sidenav a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 25px;
+            color: white;
+            display: block;
+            transition: 0.3s;
+            }
+
+            .sidenav a:hover {
+            color: gray;
+            }
+
+            .sidenav .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+            }
+
+            @media screen and (max-height: 450px) {
+            .sidenav {
+                padding-top: 15px;
+            }
+            .sidenav a {
+                font-size: 18px;
+            }
+            }
+
+        </style>
+    </head>
+    <body>
+       
+
+        <div>
+                <div id="mySidenav" class="sidenav">
+                  <a href="javascript:void(0)" class="closebtn" v-on:click="closeNav">&times;</a>
+                  <a href="#">About</a>
+                  <a href="#">Services</a>
+                  <a href="#">Clients</a>
+                  <a href="#">Contact</a>
+                </div>
+          
+                <header >
+                  <span id="main-span" style="font-size: 30px; cursor: pointer" v-on:click="openNav"><img src="../assets/sidebarlogo.png"></span>
+                  QUALITYBUDDY
+                </header>
+              </div>
+        <div id="chart1">     
+        <div id="chart"></div>
+        </div> 
+
+        <div id="chart2">     
+        <div id="chart2"></div>
+        </div> 
+
+        <div id="checkbox">
+                <input type="checkbox" id="checkbox1" onclick="myFunction()" checked="true"> Show Checkbox1
+            <br>
+                
+                <input type="checkbox" id="checkbox2" onclick="myFunction()" checked="true"> Show Checkbox2
+            <br>
+               </div>
+        
+
+        <script>
+                export default {
+                data: () => ({
+                    active: false
+                }),
+                methods: {
+                    openNav: function() {
+                    document.getElementById("mySidenav").style.width = "250px";
+                    },
+                    closeNav: function() {
+                    document.getElementById("mySidenav").style.width = "0";
+                    }
+                }
+                };  
+            </script>
+        
+        
+        <script> 
+         var options = {
+                        chart: {
+                            type: 'bar'
+                        },
+                        series: [{
+                            name: 'commits',
+                            data: [30,40,45,50,49,60,70]
+                        }],
+                        title: {
+                        text: 'Total Commits',
+                        align: 'center'
+                        },
+                        xaxis: {
+                            categories: ["Day 1","Day 2","Day 3","Day 4","Day 5","Day 6","Day 7"]
+                        },
+                        yaxis: {
+                        min: 0,
+                        max: 80
+                        
+                        }
+                        }
+
+                        var chart = new ApexCharts(document.querySelector("#chart"), options);
+
+                        chart.render();
+        </script>
+
+<script> 
+         var options = {
+            chart: {
+                height: 403,
+                type: 'line',
+                shadow: {
+                    enabled: true,
+                    color: '#000',
+                    top: 18,
+                    left: 7,
+                    blur: 10,
+                    opacity: 1
+                },
+                toolbar: {
+                    show: false
+                }
+            },
+            colors: ['#f00707', '#26f007'],
+            dataLabels: {
+                enabled: true,
+            },
+            stroke: {
+                curve: 'smooth'
+            },
+            series: [{
+                    name: "Commits -Fail",
+                    data: [12, 11, 12, 18, 17, 32, 17]
+                },
+                {
+                    name: "Commits -Pass",
+                    data: [18, 29, 33, 32, 32, 28, 53]
+                }
+            ],
+            title: {
+                text: 'Commits -Fail -Pass',
+                align: 'left'
+            },
+            grid: {
+                borderColor: '#e7e7e7',
+                row: {
+                    colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                    opacity: 0.5
+                },
+            },
+            markers: {
+                
+                size: 6
+            },
+            xaxis: {
+                categories: ["Day 1","Day 2","Day 3","Day 4","Day 5","Day 6","Day 7"],
+                
+            },
+            yaxis: {
+                title: {
+                    text: 'Commits'
+                },
+                min: 0,
+                max: 80
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'right',
+                floating: true,
+                offsetY: -25,
+                offsetX: -5
+            }
+        }
+
+        var chart = new ApexCharts(
+            document.querySelector("#chart2"),
+            options
+        );
+
+        chart.render();
+    
+       </script>
+
+
+        
+        <script type="text/javascript">
+
+                        function myFunction() 
+                    {
+                        var chart1 = document.getElementById("chart1");
+                        // console.log(chart1)
+
+                        var chart2 = document.getElementById("chart2");
+                        // console.log(chart2)
+                        // charts >> html tag
+
+                        // set standard to automatically checked when refreshing the page/firstly opening it
+
+                        // uncheck the boxes to control the visibility
+                        if (checkbox1.checked == false) {
+                            chart1.style.visibility = "hidden";
+                        }else{
+                            chart1.style.visibility = "visible";
+                        }
+
+                        if (checkbox2.checked == false) {
+                            chart2.style.visibility = "hidden";
+                        }else{
+                            chart2.style.visibility = "visible";
+                        }
+
+                       
+                    }
+                        myFunction()
+        </script>
+
+
+
+    </body>
+</html>

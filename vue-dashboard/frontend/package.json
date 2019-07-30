@@ -19,6 +19,7 @@
     "chart.js": "^2.8.0",
     "core-js": "^2.6.5",
     "vue": "^2.6.6",
+    "vue-apexcharts": "^1.4.0",
     "vue-chartkick": "^0.5.0",
     "vue-router": "^3.0.1",
     "vuesax": "^3.9.0",
