@@ -8,6 +8,6 @@
   "dependencies": {
     "@cubejs-backend/postgres-driver": "^0.4.4",
     "@cubejs-backend/server": "^0.4.6",
-    "socket.io": "^2.2.0"
+    "socket.io": "^2.4.0"
   }
 }
